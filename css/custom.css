@@ -1,0 +1,32 @@
+/* Bootstrap overrides */
+h1.text-center {
+    margin-top: 5px;
+}
+.form-group {
+    margin-top: 10px;
+}
+
+/* Custom styles */
+.board {
+    margin-top: 10px;
+    cursor: pointer;
+}
+.board .col {
+    text-align: center;
+    font-size: 90px;
+    min-height: 140px;
+}
+
+/* Custom regions */
+#wins_losses {
+    text-align: center;
+}
+#menu {
+    float: right;
+}
+#r1c1, #r1c2, #r1c3, #r2c1, #r2c2, #r2c3 {
+    border-bottom: 3px solid #000000;
+}
+#r1c1, #r2c1, #r3c1, #r1c2, #r2c2, #r3c2 {
+    border-right: 3px solid #000000;    
+}
