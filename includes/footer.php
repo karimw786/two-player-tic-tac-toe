@@ -35,7 +35,7 @@
                     break;
 
                 case "sysreg":
-                    // Initialize local player's id/name/move
+                    // Initialize local player's id/name/move/point
                     if (typeof(p) === "undefined") {
                         p = {
                             player_id:message["player_id"],
@@ -46,27 +46,26 @@
                     }
                     break;
 
+                case "sysreject":
+                    // Hide everything, except title, from player
+                    if (typeof(p) === "undefined") {
+                        $("h1").html(message);
+                        $("#player_moves").hide();
+                        $("#game_status").hide();
+                        $("#wins_losses").hide();
+                        $("#btn_play_again").hide();
+                        $(".board").hide();
+                    }
+                    break;
+
                 case "sysready":
-                    // Update spans under #player_moves (hidden by default)
-                    $("#p1").html(message[0][1]);
-                    $("#m1").html(message[0][2]);         
-                    $("#p2").html(message[1][1]);
-                    $("#m2").html(message[1][2]);
-
-                    // Initialize current/next player names
-                    current_player = message[0][1];
-                    next_player = message[1][1];
-
-                    // Give X (Player 1) the turn_lock
-                    turn_lock = "X";
+                    players = message;
+                    reset();
 
                     // Unhide #player_moves, #win_losses, #menu
                     $("#player_moves").removeClass("d-none");
                     $("#wins_losses").removeClass("d-none");
                     $("#menu").removeClass("d-none");
-
-                    // Initialize #game_status
-                    $("#game_status").html(message[0][1] + "'s move.");
                     break;
 
                 case "sysmove":
@@ -106,6 +105,11 @@
                         setTimeout(function(){location.href = "logout.php";}, 5000); 
                     }
                     break;
+
+                case "sysplay":
+                    players = message;
+                    reset();
+                    break;
             }
         };
 
@@ -124,6 +128,9 @@
                         location.href = "logout.php";
                     }
                 }
+            });
+            $("#btn_play_again").click(function(event) {
+                send_message('userplay', '{}');
             });
         });
     </script>

@@ -1,5 +1,6 @@
 // Game administration variables
 var p;                                  // The local player
+var players;                            // Both players in the game
 var global_scores = [0,0,0,0,0,0,0,0]   // Scores
 var moves = 0;                          // Counts number of moves
 var grid_size = 3;                      // Default board will be 3x3
@@ -55,6 +56,12 @@ function send_message(message_type, msg) {
                 message_type: message_type,
                 player_id: msg_contents.player_id, 
                 player_name: msg_contents.player_name
+            };
+            break;
+
+        case "userplay":
+            json_msg = {
+                message_type: message_type
             };
             break;
     }
@@ -158,8 +165,24 @@ function display_winner(win_code) {
     $("#winner_modal").modal("show");
 }
 
+// Parse move ID into row and column of move made
 function parse_move_id(move_id) {
     var r = move_id.substring(1, move_id.indexOf("c"));   // Row of the move to be made
     var c = move_id.substring(move_id.indexOf("c") + 1);  // Col of the move to be made
     return [r,c];
+}
+
+// Reset game
+function reset() {
+    $("#p1").html(players[0][1]);
+    $("#m1").html(players[0][2]);         
+    $("#p2").html(players[1][1]);
+    $("#m2").html(players[1][2]);
+    $("#game_status").html(players[0][1] + "'s move.");
+    $(".board .col").html("");
+    current_player = players[0][1];
+    next_player = players[1][1];
+    turn_lock = "X";
+    global_scores = [0,0,0,0,0,0,0,0];
+    moves = 0;
 }

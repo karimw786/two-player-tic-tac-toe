@@ -15,8 +15,6 @@ $null = NULL;
 $players = array();
 $player_id = 0;
 
-echo "Starting socket server on port $port\n";
-
 // Create TCP/IP stream socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
@@ -65,7 +63,7 @@ while (true) {
 			switch ($tst_msg["message_type"]) {
 				// Event: user checks if websockets_server.php is running
 				case "usersyscheck":
-					$response_text = mask(json_encode(array("message_type"=>"syssyscheck","msg"=>"Online")));
+					$response_text = mask(json_encode(array("message_type"=>"syssyscheck", "msg"=>"Online")));
                 	send_message($response_text);
 					break;
 
@@ -74,60 +72,45 @@ while (true) {
 					$player_name = $tst_msg["player_name"];
 					$player_ip = $tst_msg["player_ip"];
 					
-					// if player_count = 0, add player
-					if (count($players) == 0) {
+					// if player_count = 0 or 1, add player to players[]
+					if (count($players) < 2) {
 						$player_id++;
-						$player_move = "X";
-						$player_point = 1;
+
+						if ($player_id % 2 == 1) {
+							$player_move = "X";
+							$player_point = 1;
+						}
+						else {
+							$player_move = "O";
+							$player_point = -1;
+						}
+
 						array_push($players, array($player_id, $player_name, $player_move, $player_point, $player_ip));
-	
-						echo "Player $player_id: $player_name ($player_move) from $player_ip has joined.\n";
 					
 						$response_text = mask(json_encode(array(
-							"message_type"=>"sysreg", 
+							"message_type"=>"sysreg",
 							"msg"=>array(
 								"player_id"=>$player_id, 
-								"player_name"=>$player_name, 
+								"player_name"=>$player_name,
 								"player_move"=>$player_move,
 								"player_point"=>$player_point
 							)
 						)));
 						send_message($response_text);
 					}
-					// if player count = 1, check if IP address is already in players
-					elseif (count($players) == 1) {
-						// if it is not, then add
-						if ($players[0][4] != $player_ip) {
-							$player_id++;
-							$player_move = "O";
-							$player_point = -1;
-							array_push($players, array($player_id, $player_name, $player_move, $player_point, $player_ip));
-						
-							echo "Player $player_id: $player_name ($player_move) from $player_ip has joined.\n";
-	
-							$response_text = mask(json_encode(array(
-								"message_type"=>"sysreg", 
-								"msg"=>array(
-									"player_id"=>$player_id, 
-									"player_name"=>$player_name, 
-									"player_move"=>$player_move,
-									"player_point"=>$player_point
-								)
-							)));
-							send_message($response_text);
-						}
+					else {
+						$response_text = mask(json_encode(array("message_type"=>"sysreject", "msg"=>"Server full. Please try again later.")));
+						send_message($response_text);
 					}
 					
-					// if both players are in players, send sysready message
+					// if both players are in players[], send sysready message
 					if (count($players) == 2) {
 						$response_text = mask(json_encode(array("message_type"=>"sysready", "msg"=>$players)));
 						send_message($response_text);
-						$players = array();
-						$player_id = 0;
 					}
 					break;
 
-				// Event: users makes a move (plays X or O)
+				// Event: user makes a move (plays X or O)
 				case "usermove":
 					$response_text = mask(json_encode(array(
 						"message_type"=>"sysmove", 
@@ -141,8 +124,7 @@ while (true) {
 					send_message($response_text);
 					break;
 
-
-				// Event: For each move made by user, user sends their updated copy of scores[]
+				// Event: for each move made by user, user sends their updated copy of scores[]
 				case "userscores":
 					$response_text = mask(json_encode(array("message_type"=>"sysscores", "msg"=>$tst_msg["scores"])));
 					send_message($response_text);
@@ -157,7 +139,15 @@ while (true) {
 							"player_name"=>$tst_msg["player_name"]
 						)
 					)));
-					send_message($response_text);		
+					send_message($response_text);
+					$players = array();
+					$player_id = 0;	
+					break;
+
+				// Event: user presses play again button
+				case "userplay":
+					$response_text = mask(json_encode(array("message_type"=>"sysplay", "msg"=>$players)));
+					send_message($response_text);
 					break;
 			}
 

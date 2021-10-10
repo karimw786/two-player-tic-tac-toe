@@ -61,7 +61,7 @@ require_once("includes/header.php");
         </div>
         <div class="col">
             <div id="menu" class="d-none">
-                <a class="btn btn-primary" href="play.php" role="button" id="btn_play_again">Play Again</a> <a class="btn btn-danger" role="button" id="btn_quit">Quit</a>
+                <a class="btn btn-primary" role="button" id="btn_play_again">Play Again</a> <a class="btn btn-danger" role="button" id="btn_quit">Quit</a>
             </div>
         </div>
     </div>
