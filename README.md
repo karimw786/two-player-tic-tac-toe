@@ -16,6 +16,7 @@ Two-player tic-tac-toe game written in PHP, HTML, CSS (Bootstrap), and JavaScrip
 1. If deploying on a Docker container, run the following commands:
 
     ```docker build -t two-player-tic-tac-toe .```
+    
     ```docker run -d -p 80:80 -p 8080:8080 two-player-tic-tac-toe```
 
     Otherwise, simply put the code in your web server's document root, change into that directory from the terminal, and run the websockets server manually:
