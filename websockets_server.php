@@ -5,7 +5,7 @@
 *	Note: websockets_server.php must be running first, otherwise players will	*
 *	not be able to join a game.													*
 *																				*
-*	> php -q websockets_server.php												*
+*	> php -q websockets_server.php &											*
 ********************************************************************************/
 require_once("includes/vars.php");
 
